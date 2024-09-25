@@ -16,6 +16,7 @@ public class Solution {
                 map.remove(player);
             }
         }
+
         return map.keySet().iterator().next();
         //return map.entrySet().iterator().next().getKey();
 

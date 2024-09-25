@@ -11,7 +11,7 @@ public class Main {
 
         //int[] result = solution.solution(arr);
         //System.out.println("result = " + Arrays.toString(result));
-        System.out.println(solution.solution(arr));
+        System.out.println(Arrays.toString(solution.solution((arr))));
 
 
     }
