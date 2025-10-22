@@ -7,6 +7,7 @@ public class Main {
         SolutionV2 solution2 = new SolutionV2();
 
         System.out.println(solution.solution(new int[][]{{1, 2}, {2, 3}, {2, 1}}, 4,4));
+        System.out.println(solution2.solution(new int[][]{{1, 2}, {2, 3}, {2, 1}}, 4,4));
 
 
 
