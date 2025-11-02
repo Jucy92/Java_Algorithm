@@ -1,70 +1,96 @@
 import java.util.Arrays;
 
-class SolutionV2 {  // 풀다가 너무 복잡해서 포기.. 그래도 나중에 다시 시도해보자 -> 단순하게 2개로 나눠서 size=2 or 1에 대해서 나눠서 처리하고 전체 맵에서 값 카운트
+class SolutionV2 {  // 풀다가 너무 복잡해서 포기.. 그래도 나중에 다시 시도해보자 -> 단순하게 2개로 나눠서 size=2 or 1에 대해서 나눠서 처리하고 전체 맵에서 값 카운트 -> 다 똑같음 이게 문제가 아니라 BB 접근을 하는 로직을 따로 두고 체크해야함
+    int n, m;
+    int[] dx = {-1, 0, 1, 0};
+    int[] dy = {0, 1, 0, -1};
+
     public int solution(String[] storage, String[] requests) {
         // 1. 범위(지도) 설정
-        int totalAdditions = 0;
-        int n = storage.length;
-        int m = storage[0].length();
-        String[][] map = new String[n + 2][m + 2];
-        boolean[][] visited = new boolean[n + 2][m + 2];
-
-        int[] dx = {-1, 0, 1, 0};
-        int[] dy = {0, 1, 0, -1};
-
+        n = storage.length;
+        m = storage[0].length();
+        char[][] map = new char[n + 2][m + 2];
 
         // 맵에 값 채우기
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < m; j++) {
-                map[i+1][j+1] = String.valueOf(storage[i].charAt(j));
-            }
-        }
-
-        // visited에도 패딩 영역 true 바꾸기
-        for (int i = 0; i < n+2; i++) {
-            visited[i][0] = true;
-            visited[i][m+1] = true;
-            for (int j = 0; j < m+2; j++) {
-                if (i == 0) {
-                    visited[i][j] = true;
-                }
-                if (i == n + 1) {
-                    visited[i][j] = true;
+        for (int i = 0; i < n + 2; i++) {
+            for (int j = 0; j < m + 2; j++) {
+                if (i == 0 || j == 0 || i == n + 1 || j == m + 1) {
+                    map[i][j] = '.';
+                } else {
+                    map[i][j] = storage[i - 1].charAt(j - 1);
                 }
             }
         }
+        System.out.println("map = " + Arrays.deepToString(map));
 
-        for (int x = 0; x < requests.length; x++) {
-            int size = requests[x].length();
-            String outStr;
-            if (size > 1) {
-                outStr = String.valueOf(requests[x].charAt(0));
+        for (String request : requests) {
+            char target = request.charAt(0);
+            if (request.length() > 1) {
+                removeAll(map, target);
             } else {
-                outStr = requests[x];
+                removeAccessible(map, target);
             }
+        }
+        return countRemainingContainers(map);
+    }
 
-            for (int i = 1; i < n + 2; i++) {
-                for (int j = 1; j < m + 2; j++) {
-                    if (!map[i][j].equals(outStr)) {
-                        continue;
-                    }
-                    for (int k = 0; k < 4; k++) {
-                        int nx = dx[k];
-                        int ny = dy[k];
-                        if (visited[i + nx][j + ny]) {
-                            visited[i][j] = true;
-                            break;
-                        }
-                    }
-                    if (size == 1) {
-                    } else {
+    private void removeAccessible(char[][] map, char target) {
+        boolean[][] toRemove = new boolean[n + 2][m + 2];
 
-                    }
+        for (int i = 1; i < n + 1; i++) {
+            for (int j = 1; j <= m; j++) {
+                if (map[i][j] == target && isAccessible(map, i, j)) {
+                    toRemove[i][j] = true;
                 }
             }
         }
+        System.out.println("toRemove = " + Arrays.deepToString(toRemove));
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= m; j++) {
+                if (toRemove[i][j]) {
+                    map[i][j] = '.';
+                }
+            }
+        }
+        System.out.println("map = " + Arrays.deepToString(map));
 
+    }
 
-        return totalAdditions;
+    private boolean isAccessible(char[][] map, int i, int j) {
+        System.out.println("map["+i+"]["+j+"] = " + map[i][j]);
+        for (int k = 0; k < 4; k++) {
+            int nx = i + dx[k]; // 2 -> 2+(-1) = 1 / 2+0=2 / 2+1=3 / 2+0=2
+            int ny = j + dy[k]; // 3 -> 3+0    = 3 / 3+1=4 / 3+0=3 / 3-1=2
+            System.out.println("map["+nx+"]["+ny+"] = " + map[nx][ny]);
+            if (map[nx][ny] == '.') {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void removeAll(char[][] map, char target) {
+
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= m; j++) {
+                if (map[i][j] == target) {
+                    map[i][j] = '.';
+                }
+            }
+        }
+        System.out.println("removeAllMap = " + Arrays.deepToString(map));
+    }
+
+    private int countRemainingContainers(char[][] map) {
+        int count = 0;
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= m; j++) {
+                if (map[i][j] != '.') {
+                    count++;
+                }
+            }
+        }
+        return count;
     }
 }
+
