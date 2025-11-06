@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
 
-class Solution_SC2 {
+class Solution {
     int n;
     int count = 0;
     int[][] q;
@@ -35,13 +35,13 @@ class Solution_SC2 {
             }
             return;
         }
-        if (n - start + 1 < 5 - current.size()) {
+        if (n - start + 1 < 5 - current.size()) { // 전체 숫자 n 중에서 start를 통해 하나씩 제거(숫자 중복 허용 안됨) < (총 개수 5개 중에 - current.size() = 남은 추가 가능한 개수)
             return;
         }
 
-        for (int i = 1; i <= n; i++) {
+        for (int i = start; i <= n; i++) {
             current.add(i);
-            System.out.println("current = " + current);
+            //System.out.println("current = " + current);
             dfs(i + 1, current);
             current.remove(current.size() - 1);
         }
@@ -49,6 +49,17 @@ class Solution_SC2 {
     }
 
     private boolean isValid(List<Integer> current) {
-        return false;
+        for (int i = 0; i < q.length; i++) {
+            int cnt = 0;
+            for (int j = 0; j < q[i].length; j++) {
+                if (current.contains(q[i][j])) {
+                    cnt++;
+                }
+            }
+            if (cnt != ans[i]) {   // 기존에 cnt>=ans[i] => 테스트 케이스에서 2개가 답인데 1개만 통과해도 통과한걸로 됨.. 바보..
+                return false;
+            }
+        }
+        return true;
     }
 }
